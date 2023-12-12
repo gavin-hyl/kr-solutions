@@ -1,14 +1,9 @@
-/*
-    // Exercise 4-3. Add the modulus (%) operator and provisions for negative numbers
-    // Exercise 4-4. Add the commands to print the top elements of the stack without popping, to duplicate it, and to swap the top two elements. Add a command to clear the stack.
-    // Exercise 4-5. Add access to library functions like sin, exp, and pow. See <math.h> in Appendix B, Section 4.
-    // Exercise 4-6. Add commands for handling variables. (It's easy to provide twenty-six variables with single-letter names.) Add a variable for the most recently printed value.
-    // Exercise 4-7. Write a routine ungets(s) that will push back an entire string onto the input. Should ungets know about buf and bufp, or should it just use ungetch?
-    // Exercise 4-8. Suppose that there will never be more than one character of pushback. Modify getch and ungetch accordingly.
-    // Exercise 4-9. Our getch and ungetch do not handle a pushed-back EOF correctly. Decide what their properties ought to be if an EOF is pushed back, then implement your design.
-    // Exercise 4-10. An alternate organization uses getline to read an entire input line; this makes getch and ungetch unnecessary. Revise the calculator to use this approach.
-    ! Exercise 4-11. Modify getop so that it doesn't need to use ungetch. Hint: use an internal static variable.
-*/
+/**
+ * @file 4-11.c
+ * @author Gavin Hua
+ * @brief 4-11: Modify getop so that it doesn't need to use ungetch. 
+ * Hint: use an internal static variable.
+ */
 
 #include <stdio.h>
 #include <stdlib.h> // atof()
@@ -126,8 +121,11 @@ int main()
     return 0;
 }
 
-
-// push: push f onto value stack
+/**
+ * @brief Push a value onto value stack
+ *
+ * @param f the value
+ */
 void push(double f)
 {
     if (sp < MAXVAL)
@@ -137,8 +135,11 @@ void push(double f)
 
 }
 
-
-// pop: pop and return top value from stack
+/**
+ * @brief Pop and return top value from stack
+ *
+ * @return the top value
+ */
 double pop(void)
 {
     if (sp > 0)
@@ -148,8 +149,12 @@ double pop(void)
         return 0.0;
     }
 }
-
-// getop: get next character or numeric operand and writes it into s
+/**
+ * @brief Get next character or numeric operand and writes it into a string
+ *
+ * @param s the string
+ * @return the type of token written
+ */
 int getop(char s[])
 {
     int i=0, c;
@@ -209,10 +214,13 @@ int getop(char s[])
 
 }
 
-/* 
-    get a (possibly pushed-back) character
-    now modified to be a utility function accompanying getop
-*/
+/**
+ * @brief Get a (possibly pushed-back) character, now modified to be a utility
+ * function accompanying getop
+ * 
+ * @param buf the buffer
+ * @return the character
+ */
 int getch(char *buf)
 {   
     char ret = (*buf == 0) ? getchar() : *buf;

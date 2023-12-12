@@ -1,9 +1,14 @@
 /**
- * @file 4-10.c
+ * @file 4-8to9.c
  * @author Gavin Hua
- * @brief 4-10: An alternate organization uses getline to read an entire input
- * line; this makes getch and ungetch unnecessary. Revise the calculator to use
- * this approach.
+ * @brief Calculator program for exercises 4-8 and 4-9.
+ *
+ * 4-8: Suppose that there will never be more than one character of pushback.
+ * Modify getch and ungetch accordingly.
+ *
+ * 4-9: Our getch and ungetch do not handle a pushed-back EOF correctly.
+ * Decide what their properties ought to be if an EOF is pushed back,
+ * then implement your design.
  */
 
 #include <stdio.h>
@@ -14,24 +19,22 @@
 
 #define MAXOP 100  // max size of operand or operator
 #define NUMBER '0' // signal that a number was found
-#define VARIABLE -2
+#define VARIABLE '1'
 #define MAXVAL 100 // maximum depth of val stack
-#define MAXLINE 100
 
 int getop(char[]);
-int get_line(char[], int);
 void push(double);
 double pop(void);
 int getch(void);
+void ungetch(int);
+void ungets(char[]);
 
-char line[MAXLINE];
-int linep = -1;
-char buf = 0;
-int sp = 0;         // next free stack position
-double val[MAXVAL]; // value stack
-double variables[27];
-int varp = 0; // current variable in use
-double i_1, i_2;
+char buf;             /* buffer for ungetch */
+int sp = 0;           /* next free stack position */
+double val[MAXVAL];   /* value stack */
+double variables[27]; /* the stored variables*/
+int varp = 0;         /* current variable in use */
+double i_1, i_2;      /* intermediate variables*/
 
 /* reverse Polish calculator */
 int main()
@@ -160,84 +163,109 @@ double pop(void)
  */
 int getop(char s[])
 {
-    int i = 0, c;
-    if (line[linep] == '\0' || linep == -1)
-    {
-        get_line(line, MAXLINE);
-        linep = 0;
-    }
-    while ((s[0] = c = line[linep++]) == ' ' || c == '\t')
+    int i = 0, c, d;
+    while ((s[0] = c = getch()) == ' ' || c == '\t')
         ;
     s[1] = '\0';
-    if (!isalnum(c) && c != '.' && c != '-' && c != '>' && c != '<') // not a number nor a variable nor an assignment
-    {
+    if (!isalnum(c) && c != '.' && c != '-' && c != '>' && c != '<')
+    { // not a number nor a variable nor an assignment
         return c;
     }
-    else if (c == '-') // negative sign or subtraction?
-    {
-        if (isdigit((line[linep++]))) // negative number
-        {
+    else if (c == '-')
+    { // negative sign or subtraction?
+        if (isdigit((c = getchar())))
+        { // negative number
             s[i++] = '-';
             s[i++] = c;
         }
         else
-        {
-            return c; // subtraction
+        { // subtraction
+            return c;
         }
     }
-    else if (c == '>') // variable assignment into the next character
-    {
-        varp = tolower(line[linep++]) - 'a';
+    else if (c == '>')
+    { // variable assignment into the next character
+        varp = tolower(getchar()) - 'a';
         return VARIABLE;
     }
-    else if (isalpha(c)) // get value from variable
-    {
+    else if (isalpha(c))
+    { // get value from variable
         sprintf(s, "%g", variables[tolower(c) - 'a']);
         return NUMBER;
     }
-    else if (c == '<') // calling the most recently printed value
-    {
+    else if (c == '<')
+    { // calling the most recently printed value
         sprintf(s, "%g", variables[26]);
         return NUMBER;
     }
-    else // none of the above, is a number
-    {
-        if (isdigit(c)) // collect integer part
-        {
-            while (isdigit(s[++i] = c = line[linep++]))
+    else
+    { // none of the above, is a number
+        if (isdigit(c))
+        { // collect integer part
+            while (isdigit(s[++i] = c = getch()))
                 ;
         }
-        if (c == '.') // collect fraction part
-        {
-            while (isdigit(s[++i] = c = line[linep++]))
+        if (c == '.')
+        { // collect fraction part
+            while (isdigit(s[++i] = c = getch()))
                 ;
         }
         s[i] = '\0';
-        linep--;
+        if (c != EOF)
+        {
+            ungetch(c);
+        }
+        else if (c == EOF)
+        {
+            return EOF;
+        }
         return NUMBER;
     }
 }
 
 /**
- * @brief Read a line from user input
+ * @brief Get a (possibly pushed-back) character
  *
- * @param s the char array for which the line will be read into
- * @param lim maximum length to read
- * @return the number of characters read
+ * @return the character
  */
-int get_line(char s[], int lim)
+int getch(void)
 {
-    int c, i;
-    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i)
-        s[i] = c;
-    if (c == '\n')
+    int ret = (buf == 0) ? getchar() : buf;
+    if (ret == EOF)
     {
-        s[i++] = c;
+        exit(0);
     }
-    else if (c == EOF)
+    buf = 0;
+    return ret;
+}
+
+/**
+ * @brief Push character back on input
+ *
+ * @param c the character
+ */
+void ungetch(int c)
+{
+    if (c != EOF)
     {
-        exit(0); // more elegant solution, straight from chapter 7 :D
+        buf = c;
     }
-    s[i] = '\0';
-    return i;
+    else
+    {
+        exit(0);
+    }
+}
+
+/**
+ * @brief Push string back on input
+ *
+ * @param s the string
+ */
+void ungets(char s[])
+{
+    int len = strlen(s);
+    for (int i = len - 1; i >= 0; i--)
+    {
+        ungetch(s[i]);
+    }
 }

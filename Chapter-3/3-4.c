@@ -1,24 +1,37 @@
-/* 
-    In a two's complement number representation, our version of itoa does not handle the largest negative number,
-    that is, the value of n equal to -(2^(wordsize-1)). Explain why not. Modify it to print that value correctly, regardless of the machine on which it runs.
-*/
+/**
+ * @file 3-4.c
+ * @author Gavin Hua
+ * @brief 3-4: In a two's complement number representation, our version of itoa
+ * does not handle the largest negative number, that is, the value of n equal to
+ * -(2^ * (wordsize-1)). Explain why not. 
+ * 
+ * ANS: The negative sign will not be stored in the array bounds.
+ * 
+ * Modify it to print that value correctly, regardless of the machine on which
+ * it runs. 
+ */
 
 #include <string.h>
 #include <stdio.h>
 
-#define MAXSTR 100
-
 void itoa(int n, char s[]);
 void reverse(char s[]);
 
-char s[MAXSTR];
 
 int main()
 {
+    const int MAX_STR = 100;
+    char s[MAX_STR];
     itoa(-100, s);
     printf(s);
 }
 
+/**
+ * @brief Converts an integer into a string representation
+ * 
+ * @param n the integer
+ * @param s the string representation
+ */
 void itoa(int n, char s[])
 {
     int i=0, sign;
@@ -41,6 +54,11 @@ void itoa(int n, char s[])
     reverse(s);
 }
 
+/**
+ * @brief Reverses a string in place
+ * 
+ * @param s the string
+ */
 void reverse(char s[])
 {
     int c, i, j;

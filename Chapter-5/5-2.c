@@ -18,11 +18,12 @@ int main(int argc, char const *argv[])
 
 int getfloat(float *fp)
 {
-    int c=0, sign=0;
+    int c = 0, sign = 0;
     double pow = 1;
-    while (isspace(c = getch()));
+    while (isspace(c = getch()))
+        ;
 
-    if (!isdigit(c) && c != EOF && c != '+' && c != '-') 
+    if (!isdigit(c) && c != EOF && c != '+' && c != '-')
     {
         ungetch(c);
         return 0;
@@ -39,7 +40,7 @@ int getfloat(float *fp)
     {
         *fp = 10 * *fp + (c - '0');
     }
-    
+
     if (c == '.')
     {
         c = getch();
@@ -49,7 +50,7 @@ int getfloat(float *fp)
             pow *= 10;
         }
     }
-        
+
     *fp *= sign;
     *fp /= pow;
 
@@ -78,5 +79,5 @@ void ungetch(int c)
     else
     {
         buf[bufp++] = c;
-    }   
+    }
 }
