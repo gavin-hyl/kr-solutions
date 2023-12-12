@@ -1,0 +1,10 @@
+abc
+def
+ghi
+file2
+a complicated multi-word line
+123
+xyz
+456
+C is minimal
+end of file2.

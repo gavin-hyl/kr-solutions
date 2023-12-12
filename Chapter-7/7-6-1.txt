@@ -1,0 +1,11 @@
+abc
+def
+123
+file1
+a simple multi-word line
+ghi
+jkl
+456
+lol
+C is cool
+end of file1.
