@@ -1,6 +1,8 @@
-/*
-    Modify undcl so that it does not add redundant parentheses to declarations.
-*/
+/**
+ * @file 5-19.c
+ * @author Gavin Hua
+ * @brief Modify undcl so that it does not add redundant parentheses to declarations.
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -8,12 +10,18 @@
 #include <ctype.h>
 
 #define MAXTOKEN 100
-enum tokentypes { NAME = 1, PARENS, BRACKETS };
+
+enum tokentypes
+{
+    NAME = 1,
+    PARENS,
+    BRACKETS
+};
 
 int gettoken(void);
 
-int tokentype;              // type of last token, 0 if not read yet
-char token[MAXTOKEN];       // last token string
+int tokentype;        // type of last token, 0 if not read yet
+char token[MAXTOKEN]; // last token string
 char out[1000];
 char temp[MAXTOKEN];
 
@@ -37,7 +45,7 @@ int main()
                 }
                 strcat(out, token);
             }
-            else if (type == '*') 
+            else if (type == '*')
             {
                 if (pbuffer)
                 {
@@ -46,7 +54,7 @@ int main()
                 }
                 pbuffer = 1;
             }
-            else if (type == NAME) 
+            else if (type == NAME)
             {
                 if (pbuffer)
                 {
@@ -62,21 +70,27 @@ int main()
                 printf("invalid input at %s\n", token);
             }
         }
-        printf("%s\n",out);
+        printf("%s\n", out);
     }
 
-   return 0;
+    return 0;
 }
 
+/**
+ * @brief Get the next token
+ * 
+ * @return the token type
+ */
 int gettoken(void)
 {
     int c, getch(void);
     void ungetch(int);
     char *p = token;
 
-    while ((c = getch()) == ' ' || c == '\t') ;
+    while ((c = getch()) == ' ' || c == '\t')
+        ;
 
-    if (c == '(') 
+    if (c == '(')
     {
         if ((c = getch()) == ')')
         {
@@ -88,20 +102,21 @@ int gettoken(void)
             ungetch(c);
             return tokentype = '(';
         }
-    } 
+    }
     else if (c == '[')
     {
         *p++ = c;
-        while ((*p++ = getch()) != ']') ;
+        while ((*p++ = getch()) != ']')
+            ;
         *p = '\0';
         return tokentype = BRACKETS;
     }
-    else if (isalpha(c)) 
+    else if (isalpha(c))
     {
         do
         {
             *p++ = c;
-        } while (isalnum(c = getch()) || c=='_');
+        } while (isalnum(c = getch()) || c == '_');
         *p = '\0';
         ungetch(c);
         return tokentype = NAME;
@@ -114,11 +129,21 @@ int gettoken(void)
 char buf[BUFSIZE];
 int bufp = 0;
 
+/**
+ * @brief Get a (possibly pushed-back) character
+ *
+ * @return the character
+ */
 int getch(void)
 {
     return (bufp > 0) ? buf[--bufp] : getchar();
 }
 
+/**
+ * @brief Push character back on input
+ *
+ * @param c the character
+ */
 void ungetch(int c)
 {
     if (bufp >= BUFSIZE)
@@ -128,5 +153,5 @@ void ungetch(int c)
     else
     {
         buf[bufp++] = c;
-    }   
+    }
 }

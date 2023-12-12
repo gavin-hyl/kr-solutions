@@ -1,6 +1,10 @@
-/*
-    Write the program expr, which evaluates a reverse Polish expression from the command line, where each operator or operand is a separate argument.
-*/
+/**
+ * @file 5-10.c
+ * @author Gavin Hua
+ * @brief 5-10: Write the program expr, which evaluates a reverse Polish 
+ * expression from the command line, where each operator or operand is a 
+ * separate argument.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -62,35 +66,47 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-
-// push: push f onto value stack
+/**
+ * @brief Push a value onto value stack
+ *
+ * @param f the value
+ */
 void push(double f)
 {
     if (sp < MAXVAL)
     {
         val[sp++] = f;
-    } else
+    }
+    else
     {
         printf("error: stack full, can't push %g\n", f);
     }
-        
 }
 
-
-// pop: pop and return top value from stack
+/**
+ * @brief Pop and return top value from stack
+ *
+ * @return the top value
+ */
 double pop(void)
 {
     if (sp > 0)
     {
         return val[--sp];
-    } else
+    }
+    else
     {
         printf("error: stack empty\n");
         return 0.0;
     }
 }
 
-// getop: get next character or numeric operand and writes it into s
+/**
+ * @brief Get next character or numeric operand and writes it into a string
+ *
+ * @param op the string
+ * @return the type of token written
+ */
 int get_op_type(char *op)
 {
     int c;

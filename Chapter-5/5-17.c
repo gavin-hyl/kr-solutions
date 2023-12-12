@@ -19,7 +19,7 @@ int my_strcmp(char *, char *);
 void swap(void *[], int, int);
 int readlines(char *[], int);
 void writelines(char *[], int);
-void formatdir(char *);
+void trim_dir(char *);
 
 char *lines[MAXLINES];
 int nlines, reverse, fold, dir, num;
@@ -86,8 +86,8 @@ int my_strcmp(char *s1, char *s2)
     }  
     if (dir)
     {
-        formatdir(s1cpy);
-        formatdir(s2cpy);
+        trim_dir(s1cpy);
+        trim_dir(s2cpy);
     }
     return strcmp(s1cpy, s2cpy) < 0;
 }
@@ -100,7 +100,7 @@ void swap(void *v[], int a, int b)
     v[b] = temp;
 }
 
-void formatdir(char *s)
+void trim_dir(char *s)
 {
     int i = 0, j = 0;
     while (s[i])

@@ -1,7 +1,9 @@
-/*
-    Modify the program entab to accept a list of tab stops as arguments.
-    Use the default tab settings if there are no arguments.
-*/ 
+/**
+ * @file 5-11-entab.c
+ * @author Gavin Hua
+ * @brief 5-11: Modify the program entab to accept a list of tab stops as
+ * arguments. Use the default tab settings if there are no arguments.
+ */
 
 #include <stdio.h>
 #include <ctype.h>
@@ -13,7 +15,7 @@
 #define MAXLINE 1000
 
 int tabstops[MAXTABS];
-int *ptabstops = tabstops;
+int *tabstops_p = tabstops;
 
 void extrapolate_tabstops(int);
 int get_line(char *, int);
@@ -22,7 +24,7 @@ int main(int argc, char *argv[])
 {   
     int arg, cols, spaces;
     char line[MAXLINE];
-    char *pline = line;
+    char *line_p = line;
 
     extrapolate_tabstops(TABSPACES);
 
@@ -38,7 +40,7 @@ int main(int argc, char *argv[])
         }
         if ((*argv)[0] == '-')
         {
-            *ptabstops++ = arg;
+            *tabstops_p++ = arg;
             extrapolate_tabstops(TABSPACES);
         }
         else
@@ -55,30 +57,30 @@ int main(int argc, char *argv[])
 
     while (get_line(line, MAXLINE) != EOF)
     {   // transform all suitable lengths of spaces into tabs
-        pline = line;
+        line_p = line;
         cols = spaces = 0;
-        ptabstops = tabstops;
-        while(*pline)
+        tabstops_p = tabstops;
+        while(*line_p)
         {
-            if (*pline == '\t')
+            if (*line_p == '\t')
             {   
                 spaces = 0;
-                ptabstops++;
-                pline++;
+                tabstops_p++;
+                line_p++;
                 printf("\\t");
             }
-            else if (*pline == ' ')
+            else if (*line_p == ' ')
             {
-                while (*pline == ' ')
+                while (*line_p == ' ')
                 {
-                    pline++;
+                    line_p++;
                     cols++;
                     spaces++;
-                    if (cols == *ptabstops)
+                    if (cols == *tabstops_p)
                     {   
                         printf("\\t");
                         spaces = 0;
-                        ptabstops++;    // beware of increments in comparisons!
+                        tabstops_p++;    // beware of increments in comparisons!
                     }
                 }
                 while (spaces > 0)
@@ -89,9 +91,9 @@ int main(int argc, char *argv[])
             }
             else
             {
-                printf("%c", *pline++);
+                printf("%c", *line_p++);
                 cols++;
-                ptabstops += (cols == *ptabstops);
+                tabstops_p += (cols == *tabstops_p);
             }
         }
     }
@@ -99,17 +101,30 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+/**
+ * @brief Populates the tabstops array with the arithmetic sequence starting at
+ * the current stop, and common difference v
+ * 
+ * @param v the common difference
+ */
 void extrapolate_tabstops(int v)
 {
-    int *ex_root = ptabstops;
-    while (ptabstops - tabstops < MAXTABS)
+    int *ex_root = tabstops_p;
+    while (tabstops_p - tabstops < MAXTABS)
     {
-        *ptabstops = *(ptabstops-1) + v;
-        ptabstops++;
+        *tabstops_p = *(tabstops_p-1) + v;
+        tabstops_p++;
     }
-    ptabstops = ex_root;
+    tabstops_p = ex_root;
 }
 
+/**
+ * @brief Read a line from user input
+ *
+ * @param s the char array for which the line will be read into
+ * @param lim maximum length to read
+ * @return the number of characters read
+ */
 int get_line(char *s, int lim)
 {
     int c, i;

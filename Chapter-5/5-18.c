@@ -1,11 +1,17 @@
-/*
-    Make dcl recover from input errors.
+/**
+ * @file 5-18.c
+ * @author Gavin Hua
+ * @brief Exercise 5-18.
+ *
+ * Make dcl recover from input errors.
+ */
 
-    Possible input errors:
-    x missing brackets
-    x using non-int type as array index
-    x using keywords for variable names
-    x data type not specified
+/*
+Possible input errors:
+missing brackets
+using non-int type as array index
+using keywords for variable names
+data type not specified
 */
 
 #include <stdio.h>
@@ -15,35 +21,39 @@
 
 #define MAXTOKEN 100
 
-enum tokentypes { NAME = 1, PARENS, BRACKETS };
+enum tokentypes
+{
+    NAME = 1,
+    PARENS,
+    BRACKETS
+};
 
 void dcl(void);
 void dirdcl(void);
 int gettoken(void);
 int is_keyword(char *);
 
-int tokentype;              // type of last token, 0 if not read yet
-char token[MAXTOKEN];       //last token string
-char name[MAXTOKEN];        // identifier name
-char datatype[MAXTOKEN];    //data type = char, int, etc.
-char arrsub[MAXTOKEN];      // array subscript
+int tokentype;           // type of last token, 0 if not read yet
+char token[MAXTOKEN];    // last token string
+char name[MAXTOKEN];     // identifier name
+char datatype[MAXTOKEN]; // data type = char, int, etc.
+char arrsub[MAXTOKEN];   // array subscript
 char out[1000];
 
-char *datatypes[] = {"char", "int", "float", 0};    // test list
+char *datatypes[] = {"char", "int", "float", 0}; // test list
 
-// convert declaration to words
-int main() 
+int main()
 {
-    while (gettoken() != EOF) 
-    {   // 1st token on line
-        strcpy(datatype, token);    // is the datatype
+    while (gettoken() != EOF)
+    {                            // 1st token on line
+        strcpy(datatype, token); // is the datatype
         if (!is_keyword(token))
         {
             printf("error: data type not speciced.\n");
             exit(1);
         }
         out[0] = '\0';
-        dcl();                      // parse rest of line
+        dcl(); // parse rest of line
         if (tokentype != '\n')
         {
             printf("error: wrong syntax.\n");
@@ -56,7 +66,10 @@ int main()
     return 0;
 }
 
-// dcl: parse a declarator
+/**
+ * @brief Parse a declarator
+ *
+ */
 void dcl(void)
 {
     int nstars = 0;
@@ -72,22 +85,25 @@ void dcl(void)
     }
 }
 
-// dirdcl: parse a direct declarator
+/**
+ * @brief Parse a direct declarator
+ * 
+ */
 void dirdcl(void)
 {
     int type;
 
     if (tokentype == '(')
-    {   // ( dcl )
+    { // ( dcl )
         dcl();
         if (tokentype != ')')
         {
             printf("error: missing )\n");
             exit(1);
-        } 
-    } 
-    else if (tokentype == NAME) 
-    {   // variable name
+        }
+    }
+    else if (tokentype == NAME)
+    { // variable name
         strcpy(name, token);
     }
     else
@@ -96,7 +112,7 @@ void dirdcl(void)
         exit(1);
     }
 
-    while ((type=gettoken()) == PARENS || type == BRACKETS)
+    while ((type = gettoken()) == PARENS || type == BRACKETS)
     {
         if (type == PARENS)
         {
@@ -111,7 +127,11 @@ void dirdcl(void)
     }
 }
 
-// return next token
+/**
+ * @brief Get the next token
+ * 
+ * @return the token type
+ */
 int gettoken(void)
 {
     int c, getch(void);
@@ -119,9 +139,10 @@ int gettoken(void)
     char *p = token;
     char *parrsub = arrsub;
 
-    while ((c = getch()) == ' ' || c == '\t') ;
+    while ((c = getch()) == ' ' || c == '\t')
+        ;
 
-    if (c == '(') 
+    if (c == '(')
     {
         if ((c = getch()) == ')')
         {
@@ -133,14 +154,14 @@ int gettoken(void)
             ungetch(c);
             return tokentype = '(';
         }
-    } 
+    }
     else if (c == '[')
     {
         *p++ = c;
         while ((*p = getch()) != ']')
         {
             if ((*p > '9' || *p < '0') || (p == &token[1] && *p == '0'))
-            {   // checks for non-numeric index
+            { // checks for non-numeric index
                 printf("error: array subscript must be nonzero integer.\n");
                 exit(1);
             }
@@ -149,8 +170,8 @@ int gettoken(void)
         *++p = '\0';
         return tokentype = BRACKETS;
     }
-    else if (isalpha(c)) 
-    {   
+    else if (isalpha(c))
+    {
         do
         {
             *p++ = c;
@@ -169,31 +190,45 @@ int gettoken(void)
     return tokentype = c;
 }
 
-
+/**
+ * @brief Checks whether an element is a keyword
+ * 
+ * @param element 
+ * @return int 
+ */
 int is_keyword(char *element)
 {
-    char **pkeywords = datatypes;
-    while(*pkeywords)
+    char **keywords_p = datatypes;
+    while (*keywords_p)
     {
-        if (strcmp(*pkeywords, element) == 0)
+        if (strcmp(*keywords_p, element) == 0)
         {
             return 1;
         }
-        pkeywords++;
+        keywords_p++;
     }
     return 0;
 }
-
 
 #define BUFSIZE 100
 char buf[BUFSIZE];
 int bufp = 0;
 
+/**
+ * @brief Get a (possibly pushed-back) character
+ *
+ * @return the character
+ */
 int getch(void)
 {
     return (bufp > 0) ? buf[--bufp] : getchar();
 }
 
+/**
+ * @brief Push character back on input
+ *
+ * @param c the character
+ */
 void ungetch(int c)
 {
     if (bufp >= BUFSIZE)
@@ -203,5 +238,5 @@ void ungetch(int c)
     else
     {
         buf[bufp++] = c;
-    }   
+    }
 }

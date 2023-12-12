@@ -1,7 +1,9 @@
-/*
-    Modify the program detab to accept a list of tab stops as arguments.
-    Use the default tab settings if there are no arguments.
-*/ 
+/**
+ * @file 5-11-detab.c
+ * @author Gavin Hua
+ * @brief 5-11: Modify the program detab to accept a list of tab stops as
+ * arguments. Use the default tab settings if there are no arguments.
+ */
 
 #include <stdio.h>
 #include <ctype.h>
@@ -13,13 +15,13 @@
 #define MAXLINE 1000
 
 int tabstops[MAXTABS];
-int *ptabstops = tabstops;
+int *tabstops_p = tabstops;
 
 void add_space(int *);
 int get_line(char *, int);
 
 int main(int argc, char *argv[])
-{   
+{
     int tab, cols;
     char line[MAXLINE];
     char *pline = line;
@@ -28,9 +30,9 @@ int main(int argc, char *argv[])
 
     while (--argc > 0 && (*++argv)[0] == '-')
     {
-        if ((tab = atoi((*argv)+1)) != 0)
-        {   // technically the +1 is not needed, and we can just use an abs
-            *ptabstops++ = tab;
+        if ((tab = atoi((*argv) + 1)) != 0)
+        { // technically the +1 is not needed, and we can just use an abs
+            *tabstops_p++ = tab;
         }
         else
         {
@@ -39,17 +41,17 @@ int main(int argc, char *argv[])
         }
     }
 
-    while(get_line(line, MAXLINE) != EOF)
+    while (get_line(line, MAXLINE) != EOF)
     {
         pline = line;
         cols = 0;
-        ptabstops = tabstops;
-        while(*pline)
+        tabstops_p = tabstops;
+        while (*pline)
         {
             if (*pline == '\t')
-            {   
+            {
                 add_space(&cols);
-                if (*ptabstops == 0)
+                if (*tabstops_p == 0)
                 {
                     while (cols % TABSPACES != 0)
                     {
@@ -58,12 +60,12 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    while (cols < *ptabstops)
+                    while (cols < *tabstops_p)
                     {
                         add_space(&cols);
                     }
                 }
-                ptabstops++;
+                tabstops_p++;
             }
             else
             {
@@ -77,17 +79,27 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+/**
+ * @brief Prints a space to stdout, and increments a column count
+ *
+ * @param c the column count
+ */
 void add_space(int *c)
 {
     (*c)++; // ++ has higher precedence than *
     printf(" ");
 }
 
-// read a line into s (including \n), return length
+/**
+ * @brief Populates the tabstops array with the arithmetic sequence starting at
+ * the current stop, and common difference v
+ *
+ * @param v the common difference
+ */
 int get_line(char *s, int lim)
 {
     int c, i;
-    for (i = 0; i < lim-1 && (c=getchar()) != EOF && c!='\n'; i++)
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; i++)
     {
         s[i] = c;
     }
