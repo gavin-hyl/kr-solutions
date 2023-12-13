@@ -1,8 +1,10 @@
 /**
  * @file 8-7.c
  * @author Gavin Hua
- * @brief 8-7: malloc accepts a size request without checking its plausibility; 
- * free believes that the block it is asked to free contains a valid size field.
+ * @brief Exercise 8-7.
+ *
+ * malloc accepts a size request without checking its plausibility; free
+ * believes that the block it is asked to free contains a valid size field.
  * Improve these routines so they make more pains with error checking.
  */
 
@@ -28,6 +30,12 @@ static Header *more_mem(unsigned int);
 void my_free(void *);
 void *my_malloc(unsigned int);
 
+/**
+ * @brief Allocates memory for a pointer
+ * 
+ * @param n_bytes the bytes of memory to allocate
+ * @return a pointer to the start of the empty memory
+ */
 void *my_malloc(unsigned int n_bytes)
 {
     Header *p, *prev_p;
@@ -41,8 +49,8 @@ void *my_malloc(unsigned int n_bytes)
     /* one unit is the size of a header union */
     n_units = (n_bytes + sizeof(Header) - 1) / sizeof(Header) + 1;
 
-    if ((prev_p = free_p) == NULL) 
-    {   /* no free list yet, initialize base */
+    if ((prev_p = free_p) == NULL)
+    { /* no free list yet, initialize base */
         base.info.next = free_p = prev_p = &base;
         base.info.size = 0;
     }
@@ -78,6 +86,12 @@ void *my_malloc(unsigned int n_bytes)
 
 #define N_ALLOC 1024 /* minimum number of units to request */
 
+/**
+ * @brief Ask for more memory from the system
+ * 
+ * @param n_units the number of units (multiples of sizeof(header)) to ask for
+ * @return a pointer to the header of the newly allocated memory
+ */
 static Header *more_mem(unsigned int n_units)
 {
     char *cp;
@@ -101,7 +115,11 @@ static Header *more_mem(unsigned int n_units)
     return free_p;
 }
 
-/* free: put block ap in free list */
+/**
+ * @brief Put a block ap in free list
+ * 
+ * @param ap the block to free
+ */
 void my_free(void *ap)
 {
     Header *bp, *p;
@@ -114,7 +132,7 @@ void my_free(void *ap)
     for (p = free_p; !(bp > p && bp < p->info.next); p = p->info.next)
     {
         if (p >= p->info.next && (bp > p || bp < p->info.next))
-        {   /* freed block at start or end of arena */
+        { /* freed block at start or end of arena */
             break;
         }
     }
@@ -139,8 +157,8 @@ int main(int argc, char const *argv[])
 {
     printf("%p\n", free_p);
     char *p1 = my_malloc(1024 * sizeof(Header));
-    printf("%p\n", free_p);
-    char *p2 = my_malloc(2048 * sizeof(Header));
-    printf("%p\n", free_p);
+    printf("%p\n", p1);
+    char *p2 = my_malloc(-1 * sizeof(Header));
+    printf("%p\n", p2);
     return 0;
 }

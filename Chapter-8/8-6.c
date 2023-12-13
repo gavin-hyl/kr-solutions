@@ -1,9 +1,11 @@
 /**
  * @file 8-6.c
  * @author Gavin Hua
- * @brief The standard library function calloc(n,size) returns a pointer to n 
- * objects of size size, with the storage initialized to zero. 
- * Write calloc, by calling malloc or by modifying it. 
+ * @brief Exercise 8-6.
+ *
+ * The standard library function calloc(n,size) returns a pointer to n objects
+ * of size size, with the storage initialized to zero. Write calloc, by calling
+ * malloc or by modifying it.
  */
 
 #include <stdio.h>
@@ -17,28 +19,34 @@ typedef union header
     struct
     {
         union header *next; /* next block */
-        unsigned int size;  /* size of this block, in terms of units */
+        unsigned size;  /* size of this block, in terms of units */
     } info;
     Align _; /* force alignment of blocks */
 } Header;
 
 static Header base;           /* empty list */
 static Header *free_p = NULL; /* start of free list */
-static Header *more_mem(unsigned int);
+static Header *more_mem(unsigned);
 void my_free(void *);
-void *my_malloc(unsigned int);
-void *my_calloc(unsigned int, unsigned int);
+void *my_malloc(unsigned);
+void *my_calloc(unsigned, unsigned);
 
-void *my_malloc(unsigned int n_bytes)
+/**
+ * @brief Allocates memory for a pointer
+ * 
+ * @param n_bytes the bytes of memory to allocate
+ * @return a pointer to the start of the empty memory
+ */
+void *my_malloc(unsigned n_bytes)
 {
     Header *p, *prev_p;
-    unsigned int n_units;
+    unsigned n_units;
 
     /* one unit is the size of a header union */
     n_units = (n_bytes + sizeof(Header) - 1) / sizeof(Header) + 1;
 
-    if ((prev_p = free_p) == NULL) 
-    {   /* no free list yet, initialize base */
+    if ((prev_p = free_p) == NULL)
+    { /* no free list yet, initialize base */
         base.info.next = free_p = prev_p = &base;
         base.info.size = 0;
     }
@@ -74,7 +82,13 @@ void *my_malloc(unsigned int n_bytes)
 
 #define N_ALLOC 1024 /* minimum number of units to request */
 
-static Header *more_mem(unsigned int n_units)
+/**
+ * @brief Ask for more memory from the system
+ * 
+ * @param n_units the number of units (multiples of sizeof(header)) to ask for
+ * @return a pointer to the header of the newly allocated memory
+ */
+static Header *more_mem(unsigned n_units)
 {
     char *cp;
     Header *up;
@@ -99,7 +113,11 @@ static Header *more_mem(unsigned int n_units)
     return free_p;
 }
 
-/* free: put block ap in free list */
+/**
+ * @brief Put a block ap in free list
+ * 
+ * @param ap the block to free
+ */
 void my_free(void *ap)
 {
     Header *bp, *p;
@@ -107,7 +125,7 @@ void my_free(void *ap)
     for (p = free_p; !(bp > p && bp < p->info.next); p = p->info.next)
     {
         if (p >= p->info.next && (bp > p || bp < p->info.next))
-        {   /* freed block at start or end of arena */
+        { /* freed block at start or end of arena */
             break;
         }
     }
@@ -128,26 +146,34 @@ void my_free(void *ap)
     free_p = p;
 }
 
-void *my_calloc(unsigned n_obj, unsigned int n_bytes)
+/**
+ * @brief Allocates memory for a pointer which can hold n objects of size size,
+ * initialized to 0.
+ * 
+ * @param n_obj the number of objects
+ * @param size the size of one object
+ * @return a pointer to the start of the empty memory
+ */
+void *my_calloc(unsigned n_obj, unsigned size)
 {
-    char *ret_p = malloc(n_obj * n_bytes);
+    char *ret_p = malloc(n_obj * size);
     if (ret_p == NULL)
     {
         return NULL;
     }
-    for (int i = 0; i < n_obj * n_bytes; i++)
+    for (int i = 0; i < n_obj * size; i++)
     {
         ret_p[i] = 0;
     }
-    return (void *) ret_p;
+    return (void *)ret_p;
 }
 
 int main(int argc, char const *argv[])
 {
     printf("%p\n", free_p);
     char *p1 = my_malloc(1024 * sizeof(Header));
-    printf("%p\n", free_p);
+    printf("%p\n", p1);
     char *p2 = my_malloc(2048 * sizeof(Header));
-    printf("%p\n", free_p);
+    printf("%p\n", p2);
     return 0;
 }

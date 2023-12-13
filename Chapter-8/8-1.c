@@ -1,17 +1,19 @@
 /**
  * @file 8-1.c
  * @author Gavin Hua
- * @brief 8-1: Rewrite the program cat from Chapter 7 using read, write, open,
- * and close instead of their standard library equivalents. 
- * Perform experiments to determine the relative speeds of the two versions. 
+ * @brief Exercise 8-1.
+ *
+ * Rewrite the program cat from Chapter 7 using read, write, open, and close
+ * instead of their standard library equivalents. Perform experiments to
+ * determine the relative speeds of the two versions.
  */
 
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#include <stdio.h>  // BUFSIZ
+#include <stdio.h> // BUFSIZ
 
-int echo (int, int);
+void echo(int, int);
 
 int main(int argc, char *argv[])
 {
@@ -34,11 +36,18 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-inline int echo(int fd1, int fd2)
+/**
+ * @brief Echos the information from one file to another
+ *
+ * @param fd1 the source file
+ * @param fd2 the destination file
+ * @return
+ */
+inline void echo(int fd1, int fd2)
 {
     char buffer[BUFSIZ];
     int n;
-    while((n=read(fd1, buffer, BUFSIZ)) > 0)
+    while ((n = read(fd1, buffer, BUFSIZ)) > 0)
     {
         write(fd2, buffer, n);
     }

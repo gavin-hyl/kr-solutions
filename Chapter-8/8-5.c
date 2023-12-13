@@ -1,8 +1,10 @@
 /**
  * @file 8-5.c
  * @author Gavin Hua
- * @brief 8-5.c: Modify the fsize program to print the other information
- * contained in the inode entry.
+ * @brief Exercise 8-5.
+ * 
+ * Modify the fsize program to print the other information contained in the 
+ * inode entry.
  */
 
 #define NAME_MAX 14 /* longest filename component; system-dependent*/
@@ -43,7 +45,11 @@ int main(int argc, char **argv)
 
 void dirwalk(char *, void (*fcn)(char *));
 
-/* fsize: print the name of file "name" */
+/**
+ * @brief Prints information associated with the file
+ * 
+ * @param name the file path
+ */
 void fsize(char *name)
 {
     struct stat stbuf;
@@ -64,7 +70,12 @@ void fsize(char *name)
 }
 
 #define MAX_PATH 1024
-/* dirwalk: apply fcn to all files in dir */
+/**
+ * @brief Applies a functional to all files once in a directory recursively.
+ * 
+ * @param dir the directory
+ * @param fcn the function
+ */
 void dirwalk(char *dir, void (*fcn)(char *))
 {
     char name[MAX_PATH];

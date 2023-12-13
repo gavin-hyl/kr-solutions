@@ -1,9 +1,11 @@
 /**
  * @file 8-8.c
  * @author Gavin Hua
- * @brief 8-8: Write a routine bfree(p,n) that will free any arbitrary block p 
+ * @brief Exercise 8-8.
+ *
+ * Write a routine bfree(p,n) that will free any arbitrary block p
  * of n characters into the free list maintained by malloc and free. By using
- * bfree, a user can add a static or external array to the free list at any time. 
+ * bfree, a user can add a static or external array to the free list at any time.
  */
 
 #include <stdio.h>
@@ -30,16 +32,22 @@ void *my_malloc(unsigned);
 void *my_calloc(unsigned, unsigned);
 void bfree(void *, unsigned);
 
+/**
+ * @brief Allocates memory for a pointer
+ *
+ * @param n_bytes the bytes of memory to allocate
+ * @return a pointer to the start of the empty memory
+ */
 void *my_malloc(unsigned n_bytes)
 {
     Header *p, *prev_p;
-    unsigned int n_units;
+    unsigned n_units;
 
     /* one unit is the size of a header union */
     n_units = (n_bytes + sizeof(Header) - 1) / sizeof(Header) + 1;
 
-    if ((prev_p = free_p) == NULL) 
-    {   /* no free list yet, initialize base */
+    if ((prev_p = free_p) == NULL)
+    { /* no free list yet, initialize base */
         base.info.next = free_p = prev_p = &base;
         base.info.size = 0;
     }
@@ -75,6 +83,12 @@ void *my_malloc(unsigned n_bytes)
 
 #define N_ALLOC 1024 /* minimum number of units to request */
 
+/**
+ * @brief Ask for more memory from the system
+ *
+ * @param n_units the number of units (multiples of sizeof(header)) to ask for
+ * @return a pointer to the header of the newly allocated memory
+ */
 static Header *more_mem(unsigned n_units)
 {
     char *cp;
@@ -100,7 +114,11 @@ static Header *more_mem(unsigned n_units)
     return free_p;
 }
 
-/* free: put block ap in free list */
+/**
+ * @brief Put a block ap in free list
+ *
+ * @param ap the block to free
+ */
 void my_free(void *ap)
 {
     Header *bp, *p;
@@ -108,7 +126,7 @@ void my_free(void *ap)
     for (p = free_p; !(bp > p && bp < p->info.next); p = p->info.next)
     {
         if (p >= p->info.next && (bp > p || bp < p->info.next))
-        {   /* freed block at start or end of arena */
+        { /* freed block at start or end of arena */
             break;
         }
     }
@@ -118,58 +136,72 @@ void my_free(void *ap)
         bp->info.next = p->info.next->info.next;
     }
     else
-    {
         bp->info.next = p->info.next;
-    }
     if (p + p->info.size == bp)
     { /* join to lower nbr */
         p->info.size += bp->info.size;
         p->info.next = bp->info.next;
     }
     else
-    {
         p->info.next = bp;
-    }
     free_p = p;
 }
 
-void *my_calloc(unsigned n_obj, unsigned n_bytes)
+/**
+ * @brief Allocates memory for a pointer which can hold n objects of size size,
+ * initialized to 0.
+ *
+ * @param n_obj the number of objects
+ * @param size the size of one object
+ * @return a pointer to the start of the empty memory
+ */
+void *my_calloc(unsigned n_obj, unsigned size)
 {
-    char *ret_p = malloc(n_obj * n_bytes);
+    char *ret_p = malloc(n_obj * size);
     if (ret_p == NULL)
     {
         return NULL;
     }
-    for (int i = 0; i < n_obj * n_bytes; i++)
+    for (int i = 0; i < n_obj * size; i++)
     {
         ret_p[i] = 0;
     }
-    return (void *) ret_p;
+    return (void *)ret_p;
 }
 
+/**
+ * @brief Free any arbitrary block into the free list
+ * maintained by malloc and free.
+ * 
+ * @param block the pointer to the block of storage
+ * @param n_bytes the size of the storage
+ */
 void bfree(void *block, unsigned n_bytes)
 {
     if (block == NULL || n_bytes < 0)
     {
         return;
     }
-    Header *header_p = (Header *) block;
+    Header *header_p = (Header *)block;
     unsigned n_units = n_bytes / sizeof(Header);
     if (free_p == NULL)
-    {   /* no free list yet, initialize base */
+    { /* no free list yet, initialize base */
         base.info.next = free_p = &base;
         base.info.size = 0;
     }
     header_p->info.size = n_units;
-    my_free((void *) (header_p + 1));
+    my_free((void *)(header_p + 1));
 }
 
 int main(int argc, char const *argv[])
 {
     printf("%p\n", free_p);
     char *p1 = my_malloc(1024 * sizeof(Header));
-    printf("%p\n", free_p);
+    printf("%p\n", p1);
     char *p2 = my_malloc(2048 * sizeof(Header));
+    printf("%p\n", p2);
+    char p3[1000];
+    bfree(p3, 1000);
     printf("%p\n", free_p);
     return 0;
 }

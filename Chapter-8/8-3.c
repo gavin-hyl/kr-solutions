@@ -1,7 +1,9 @@
 /**
  * @file 8-3.c
  * @author Gavin Hua
- * @brief 8-3: Design and write _flushbuf, fflush, and fclose.
+ * @brief Exercise 8-3.
+ *
+ * Design and write _flushbuf, fflush, and fclose.
  */
 
 #include <unistd.h>
@@ -70,6 +72,14 @@ int _flushbuf(int, FILE *);
 
 #include <fcntl.h>
 #define PERMS 0666 /* RW for owner, group, others */
+
+/**
+ * @brief Opens a file.
+ *
+ * @param name the file path name
+ * @param mode open mode
+ * @return pointer to a file struct
+ */
 FILE *fopen(char *name, char *mode)
 {
     int fd;
@@ -230,6 +240,12 @@ int _flushbuf(int c, FILE *fp)
     }
 }
 
+/**
+ * @brief Flushes the buffer associated with the file
+ *
+ * @param fp the file pointer
+ * @return EOF if an error occurred, 0 if none
+ */
 int fflush(FILE *fp)
 {
     if (fp == NULL || !fp->flags.write)
@@ -240,6 +256,13 @@ int fflush(FILE *fp)
     return fp->flags.err * EOF;
 }
 
+/**
+ * @brief Close a file by reseting all the file flags, flushing and freeing the
+ * buffer, and closing the file descriptor.
+ *
+ * @param fp the file pointer
+ * @return 0 if no errors occurred, EOF otherwise.
+ */
 int fclose(FILE *fp)
 {
     if (fp == NULL)

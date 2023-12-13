@@ -1,8 +1,10 @@
 /**
  * @file 8-2.c
  * @author Gavin Hua
- * @brief 8-2: Rewrite fopen and _fillbuf with fields instead of explicit bit
- * operations. Compare code size and execution speed
+ * @brief Exercise 8-2.
+ * 
+ * Rewrite fopen and _fillbuf with fields instead of explicit bit operations.
+ * Compare code size and execution speed.
  *
  * (To test fopen and _fillbuf, _flushbuf is needed, which is included in 8-3.c)
  */
@@ -73,6 +75,14 @@ int _flushbuf(int, FILE *);
 
 #include <fcntl.h>
 #define PERMS 0666 /* RW for owner, group, others */
+
+/**
+ * @brief Opens a file.
+ * 
+ * @param name the file path name
+ * @param mode open mode
+ * @return pointer to a file struct
+ */
 FILE *fopen(char *name, char *mode)
 {
     int fd;
