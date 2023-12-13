@@ -1,17 +1,24 @@
-/*
-    Functions like isupper can be implemented to save space or to save time.
-    Explore both possibilities.
-    
-    Saving time: macros offer a ~x2.5 speed boost over function calls, the algorithm
-                    can also be improved for ~x1.25 speed boost.
-    Saving space: ?
-*/
+/**
+ * @file 7-9.c
+ * @author Gavin Hua
+ * @brief Exercise 7-9.
+ * 
+ * Functions like isupper can be implemented to save space or to save time.
+ * Explore both possibilities.
+ * 
+ * Saving time: macros offer a ~x2.5 speed boost over function calls, 
+ * the algorithm can also be improved for ~x1.25 speed boost.
+ * 
+ * Saving space: macros can save stack space by eliminating function calls. 
+ * However, when optimizations are turned on, I'm guessing all functions are
+ * inlined.
+ */
 
 #include <stdio.h>
 #include <time.h>
 
 #define isupper_macro1(c) ('A'<=c && 'Z'>=c)
-#define isupper_macro2(c) (c - 'A') * ('Z' - c) >= 0    // worse algorithm even though it has fewer conditions
+#define isupper_macro2(c) (c - 'A') * ('Z' - c) >= 0
 #define isupper_macro3(c) (!(('A' >= c) || ('Z' <= c)))
 #define CYCLES 100000000
 

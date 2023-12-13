@@ -1,9 +1,13 @@
-/* 
-	Write a program that converts upper case to lower or lower case to upper,
-	depending on the name it is invoked with, as found in argv[0]. 
-	? (I'm supposing this means argv[1]. One could also create two files 7-1u and
-	? 7-1l, but that would be too boring.)
-*/
+/**
+ * @file 7-1.c
+ * @author Gavin Hua
+ * @brief Exercise 7-1.
+ * 
+ * Write a program that converts upper case to lower or lower case to upper, 
+ * depending on the name it is invoked with, as found in argv[0]. 
+ * (I'm supposing this means argv[1])
+ */
+
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>

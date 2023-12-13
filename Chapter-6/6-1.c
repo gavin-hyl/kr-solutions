@@ -1,56 +1,57 @@
-/*
-    Our version of getword does not properly handle 
-    // underscores, 
-    // string constants, 
-    // comments, 
-    // or preprocessor control lines
-    Write a better version.
-*/
+/**
+ * @file 6-1.c
+ * @author Gavin Hua
+ * @brief Exercise 6-1.
+ *
+ * Our version of getword does not properly handle underscores, string
+ * constants, comments, or preprocessor control lines. Write a better version.
+ */
 
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 
 #define MAXWORD 100
-#define NKEYS (sizeof keytable / sizeof (keytable[0]))
+#define NKEYS (sizeof keytable / sizeof(keytable[0]))
 
-struct key {
+struct key
+{
     char *word;
     int count;
-} keytable[] = {    // preprocessor lines are ignored
-    { "auto", 0 },
-    { "break", 0 },
-    { "case", 0 },
-    { "char", 0 },
-    { "const", 0 },
-    { "continue", 0 },
-    { "default", 0 },
-    { "do", 0 },
-    { "double", 0 },
-    { "else", 0 },
-    { "enum", 0 },
-    { "extern", 0 },
-    { "float", 0 },
-    { "for", 0 },
-    { "goto", 0 },
-    { "if", 0 },
-    { "int", 0 },
-    { "long", 0 },
-    { "register", 0 },
-    { "return", 0 },
-    { "short", 0 },
-    { "signed", 0 },
-    { "sizeof", 0 },
-    { "static", 0 },
-    { "struct", 0 },
-    { "switch", 0 },
-    { "typedef", 0 },
-    { "union", 0 },
-    { "unsigned", 0 },
-    { "void", 0 },
-    { "volatile", 0 },
-    { "while", 0 }
-};
+} keytable[] = { // preprocessor lines are ignored
+    {"auto", 0},
+    {"break", 0},
+    {"case", 0},
+    {"char", 0},
+    {"const", 0},
+    {"continue", 0},
+    {"default", 0},
+    {"do", 0},
+    {"double", 0},
+    {"else", 0},
+    {"enum", 0},
+    {"extern", 0},
+    {"float", 0},
+    {"for", 0},
+    {"goto", 0},
+    {"if", 0},
+    {"int", 0},
+    {"long", 0},
+    {"register", 0},
+    {"return", 0},
+    {"short", 0},
+    {"signed", 0},
+    {"sizeof", 0},
+    {"static", 0},
+    {"struct", 0},
+    {"switch", 0},
+    {"typedef", 0},
+    {"union", 0},
+    {"unsigned", 0},
+    {"void", 0},
+    {"volatile", 0},
+    {"while", 0}
+    };
 
 int getword(char *, int);
 int binsearch(char *word, struct key tab[], int n);
@@ -64,14 +65,13 @@ int main()
     int n, c;
     char word[MAXWORD];
 
-    while ((c=getword(word, MAXWORD)) != EOF)
+    while ((c = getword(word, MAXWORD)) != EOF)
     {
         if (c == '\n')
         {
             ignore_line = 0;
         }
-        else if (isalpha(word[0]) && (n = binsearch(word, keytable, NKEYS)) >= 0
-            && !in_string && !in_comment && !ignore_line)
+        else if (isalpha(word[0]) && (n = binsearch(word, keytable, NKEYS)) >= 0 && !in_string && !in_comment && !ignore_line)
         {
             keytable[n].count++;
         }
@@ -86,8 +86,16 @@ int main()
     }
 
     return 0;
-} 
+}
 
+/**
+ * @brief Binary search algorithm for the key-count table
+ *
+ * @param word the word to search for
+ * @param tab the key-count table
+ * @param n the length of the key-count table
+ * @return the index of the word om the table, -1 if not found.
+ */
 int binsearch(char *word, struct key tab[], int n)
 {
     int comp;
@@ -97,7 +105,7 @@ int binsearch(char *word, struct key tab[], int n)
     high = n - 1;
     while (low <= high)
     {
-        mid = (low+high) / 2;
+        mid = (low + high) / 2;
         if ((comp = strcmp(word, tab[mid].word)) < 0)
         {
             high = mid - 1;
@@ -109,17 +117,25 @@ int binsearch(char *word, struct key tab[], int n)
         else
         {
             return mid;
-        }  
+        }
     }
     return -1;
 }
 
+/**
+ * @brief Get a word from the input text, assumed to be a C program
+ *
+ * @param word the pointer to store the word
+ * @param lim the length limit of the word
+ * @return int
+ */
 int getword(char *word, int lim)
 {
     int c;
     char *w = word;
 
-    while ((c=getch())==' ' || c=='\t') ;   // must return \n to terminate single-line ignores
+    while ((c = getch()) == ' ' || c == '\t')
+        ; // must return \n to terminate single-line ignores
     if (c != EOF)
     {
         *w++ = c;
@@ -127,14 +143,14 @@ int getword(char *word, int lim)
     if (!isalpha(c))
     {
         *w = '\0';
-        if (c == '\\' && (c=getch())=='\"')
-        {   // skip any escaped quotes
+        if (c == '\\' && (c = getch()) == '\"')
+        { // skip any escaped quotes
             return c;
         }
 
         if (c == '/')
         {
-            if ((c=getch()) == '*')
+            if ((c = getch()) == '*')
             {
                 in_comment = 1;
             }
@@ -149,7 +165,7 @@ int getword(char *word, int lim)
         }
         else if (c == '*')
         {
-            if ((c=getch()) == '/')
+            if ((c = getch()) == '/')
             {
                 in_comment = 0;
             }
@@ -157,7 +173,7 @@ int getword(char *word, int lim)
             {
                 ungetch(c);
             }
-        }    
+        }
         else if (c == '#')
         {
             ignore_line = 1;
@@ -171,7 +187,7 @@ int getword(char *word, int lim)
 
     while (lim-- >= 0)
     {
-        if (!isalnum(*w = getch()) && *w!='_' && *w!='(')
+        if (!isalnum(*w = getch()) && *w != '_' && *w != '(')
         {
             ungetch(*w);
             break;
@@ -192,11 +208,21 @@ int getword(char *word, int lim)
 char buf[BUFSIZE];
 int bufp = 0;
 
+/**
+ * @brief Get a (possibly pushed-back) character
+ *
+ * @return the character
+ */
 int getch(void)
 {
     return (bufp > 0) ? buf[--bufp] : getchar();
 }
 
+/**
+ * @brief Push character back on input
+ *
+ * @param c the character
+ */
 void ungetch(int c)
 {
     if (bufp >= BUFSIZE)
@@ -206,5 +232,5 @@ void ungetch(int c)
     else
     {
         buf[bufp++] = c;
-    }   
+    }
 }

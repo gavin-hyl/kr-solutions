@@ -1,9 +1,13 @@
-/*
-    ? Add a field-searching capability, so sorting may bee done on fields within lines, 
-    ? each field sorted according to an independent set of options. 
-    ? (The index for this book was sorted with -df for the index category and -n for the page numbers.) 
-*/
-
+/**
+ * @file 5-17.c
+ * @author Gavin Hua
+ * @brief Exercise 5-17.
+ * 
+ * Add a field-searching capability, so sorting may bee done on fields within 
+ * lines,each field sorted according to an independent set of options. (The 
+ * index for this book was sorted with -df for the index category and -n for the
+ * page numbers.)
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,6 +49,14 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+/**
+ * @brief Quicksort implementation
+ *
+ * @param v the array to be sorted
+ * @param comp the comparison function
+ * @param left the left index of the sub-array to sort
+ * @param right the right index of the sub-array to sort
+ */
 void my_qsort(void *v[], int (*comp)(void *, void *), int left, int right)
 {
     int i, last;
@@ -67,12 +79,26 @@ void my_qsort(void *v[], int (*comp)(void *, void *), int left, int right)
     my_qsort(v, comp, last+1, right);
 }
 
-
+/**
+ * @brief Compare two strings by comparing their corresponding float values
+ *
+ * @param s1 the first string
+ * @param s2 the second string
+ * @return 1 if s1<s2, 0 otherwise
+ */
 int numcmp(char *s1, char *s2)
 {
     return (atof(s1) < atof(s2));
 }
 
+/**
+ * @brief Compare two strings lexicographically. If fold, ignore case. If dir,
+ * then  only compare letters, numbers, and blanks.
+ *
+ * @param s1 the first string
+ * @param s2 the second string
+ * @return if s1<s2, 0 otherwise
+ */
 int my_strcmp(char *s1, char *s2)
 {   
     char *s1cpy = malloc(sizeof(char) * strlen(s1));
@@ -92,6 +118,13 @@ int my_strcmp(char *s1, char *s2)
     return strcmp(s1cpy, s2cpy) < 0;
 }
 
+/**
+ * @brief Swap two elements in an array
+ *
+ * @param v the array
+ * @param a the index of the first element
+ * @param b the index of the second element
+ */
 void swap(void *v[], int a, int b)
 {
     void *temp;
@@ -100,6 +133,12 @@ void swap(void *v[], int a, int b)
     v[b] = temp;
 }
 
+/**
+ * @brief Removes all the characters in a string that are not compared by the
+ * directory compare option.
+ *
+ * @param s the string
+ */
 void trim_dir(char *s)
 {
     int i = 0, j = 0;
@@ -117,6 +156,13 @@ void trim_dir(char *s)
     s[j] = '\0';
 }
 
+/**
+ * @brief Read a line from user input
+ *
+ * @param s the char array for which the line will be read into
+ * @param lim maximum length to read
+ * @return the number of characters read
+ */
 int get_line(char *s, int lim)
 {
     int c, i;
@@ -136,6 +182,13 @@ int get_line(char *s, int lim)
     return i;
 }
 
+/**
+ * @brief Read input lines into an array of strings
+ *
+ * @param lines the array
+ * @param lim the length of lines
+ * @return the lines read
+ */
 int readlines(char *lineptr[], int maxlines)
 {
     int len, nlines;
@@ -159,6 +212,12 @@ int readlines(char *lineptr[], int maxlines)
     return nlines;
 }
 
+/**
+ * @brief Print all strings in an array of strings
+ *
+ * @param lines the array
+ * @param n the number of strings in lines
+ */
 void writelines(char *lineptr[], int n)
 {
     for (int i = 0; i < n; i++)

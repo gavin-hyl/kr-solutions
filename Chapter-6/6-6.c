@@ -1,8 +1,12 @@
-/*
-    Implement a simple version of the #define processor (i.e., no arguments)
-    suitable for use with C programs, based on the routines of this section.
-    You may also find getch and ungetch helpful.
-*/
+/**
+ * @file 6-6.c
+ * @author Gavin Hua
+ * @brief Exercise 6-6.
+ *
+ * Implement a simple version of the #define processor (i.e., no arguments)
+ * suitable for use with C programs, based on the routines of this section. You
+ * may also find getch and ungetch helpful.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,16 +16,16 @@
 #define HASHSIZE 101
 #define MAXWORD 1000
 
-struct defnelement
+struct def_element
 {
-    struct defnelement *next;
+    struct def_element *next;
     char *name;
     char *defn;
 };
 
-struct defnelement *install(char *name, char *defn);
+struct def_element *install(char *name, char *defn);
 void undef(char *name);
-struct defnelement *lookup(char *s);
+struct def_element *lookup(char *s);
 char *str_dup(char *s);
 unsigned hash(char *s);
 int is_ignored(void);
@@ -29,14 +33,14 @@ int getword(char *w, int lim);
 int getch(void);
 void ungetch(int c);
 
-struct defnelement *hashtab[HASHSIZE];
+struct def_element *hashtab[HASHSIZE];
 int in_comment, in_string, ignore_line;
 
 int main()
 {
     int c;
     char name[MAXWORD], defn[MAXWORD];
-    struct defnelement *elemp;
+    struct def_element *elemp;
 
     while ((c = getword(name, MAXWORD)) != EOF)
     {
@@ -74,9 +78,14 @@ int main()
     return 0;
 }
 
+/**
+ * @brief Remove a name-definition pair from the linked list
+ *
+ * @param name the name
+ */
 void undef(char *name)
 {
-    struct defnelement *elementp, *headp, *tailp;
+    struct def_element *elementp, *headp, *tailp;
     if ((elementp = lookup(name)) == NULL)
     {
         printf("Cannot undefine a name that is not defined.\n");
@@ -97,13 +106,20 @@ void undef(char *name)
     headp->next = tailp;
 }
 
-struct defnelement *install(char *name, char *defn)
+/**
+ * @brief Install a name-definition pair into linked list
+ *
+ * @param name the name
+ * @param defn the definition
+ * @return a pointer to the def_element struct that was installed
+ */
+struct def_element *install(char *name, char *defn)
 {
-    struct defnelement *np;
+    struct def_element *np;
     unsigned hashval;
     if ((np = lookup(name)) == NULL)
     {
-        np = (struct defnelement *)malloc(sizeof(*np));
+        np = (struct def_element *)malloc(sizeof(*np));
         if (np == NULL || (np->name = strdup(name)) == NULL)
         {
             return NULL;
@@ -123,6 +139,12 @@ struct defnelement *install(char *name, char *defn)
     return np;
 }
 
+/**
+ * @brief Custom hash function
+ *
+ * @param s the string to be hashed
+ * @return the hash value
+ */
 unsigned hash(char *s)
 {
     unsigned hashval;
@@ -133,9 +155,15 @@ unsigned hash(char *s)
     return hashval % HASHSIZE;
 }
 
-struct defnelement *lookup(char *s)
+/**
+ * @brief Lookup a name-value pair in the linked list
+ *
+ * @param s the name to look up
+ * @return a pointer to the found def_element
+ */
+struct def_element *lookup(char *s)
 {
-    struct defnelement *np;
+    struct def_element *np;
     for (np = hashtab[hash(s)]; np != NULL; np = np->next)
     {
         if (strcmp(s, np->name) == 0)
@@ -146,6 +174,12 @@ struct defnelement *lookup(char *s)
     return NULL;
 }
 
+/**
+ * @brief Dynamically allocates memory for a string
+ *
+ * @param s the string to be duplicated
+ * @return the duplicated string
+ */
 char *str_dup(char *s)
 {
     char *p = (char *)malloc(strlen(s) + 1); // +1 for \0
@@ -157,6 +191,13 @@ char *str_dup(char *s)
     return p;
 }
 
+/**
+ * @brief Get a word from the input text, assumed to be a C program
+ *
+ * @param word the pointer to store the word
+ * @param lim the length limit of the word
+ * @return int
+ */
 int getword(char *word, int lim)
 {
     int c, c0;
@@ -235,6 +276,11 @@ int getword(char *word, int lim)
     return word[0];
 }
 
+/**
+ * @brief Check if the current token should be ignored
+ * 
+ * @return 1 if should be ignored, 0 if not
+ */
 int is_ignored()
 {
     return in_comment || in_string || ignore_line;
@@ -244,11 +290,21 @@ int is_ignored()
 char buf[BUFSIZE];
 int bufp = 0;
 
+/**
+ * @brief Get a (possibly pushed-back) character
+ *
+ * @return the character
+ */
 int getch(void)
 {
     return (bufp > 0) ? buf[--bufp] : getchar();
 }
 
+/**
+ * @brief Push character back on input
+ *
+ * @param c the character
+ */
 void ungetch(int c)
 {
     if (bufp >= BUFSIZE)

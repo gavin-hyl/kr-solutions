@@ -1,6 +1,10 @@
-/*
-    Revise minprintf to handle more of the other facilities of printf.
-*/
+/**
+ * @file 7-3.c
+ * @author Gavin Hua
+ * @brief Exercise 7-3.
+ *
+ * Revise minprintf to handle more of the other facilities of printf.
+ */
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -18,14 +22,19 @@ int main(int argc, char const *argv[])
     my_printf(":%d:\n", 12345);
     my_printf(":%f:\n", 12.345);
     my_printf(":%s:\n", "12345");
-    my_printf(":%10.3f:\n", 12.345);    // floating point precision doesn't quite work, but oh well
+    my_printf(":%10.3f:\n", 12.345); // floating point precision doesn't quite work, but oh well
     my_printf(":%10.3s:\n", "12345");
     my_printf(":%-10.3s:\n", "12345");
     my_printf(":%s %s:\n", "12345", "abcde");
     return 0;
 }
 
-// my_printf: minimal printf with variable argument list
+/**
+ * @brief Minimal printf with variable argument list
+ *
+ * @param fmt the format string
+ * @param ... variable length argument list
+ */
 void my_printf(char *fmt, ...)
 {
     va_list argp;
@@ -35,7 +44,7 @@ void my_printf(char *fmt, ...)
 
     temp[0] = '\0';
     va_start(argp, fmt);
-    while (c=*fmt)
+    while (c = *fmt)
     {
         fmt++;
         ptemp = temp;
@@ -44,9 +53,9 @@ void my_printf(char *fmt, ...)
             putchar(c);
             continue;
         }
-           
+
         c = *fmt++;
-        int precision=0, padding=0, pad_right=0;
+        int precision = 0, padding = 0, pad_right = 0;
         if (c == '-')
         {
             pad_right = 1;
@@ -55,36 +64,36 @@ void my_printf(char *fmt, ...)
         if (isdigit(c))
         {
             padding = c - '0';
-            while (isdigit(c=*fmt++))
+            while (isdigit(c = *fmt++))
             {
                 padding = 10 * padding + c - '0';
             }
         }
         if (c == '.')
         {
-            while (isdigit(c=*fmt++))
+            while (isdigit(c = *fmt++))
             {
                 precision = 10 * precision + c - '0';
             }
         }
-            
+
         switch (c)
         {
-            case 'd':
-                ival = va_arg(argp, int);
-                sprintf(temp, "%d", ival);
-                break;
-            case 'f':
-                dval = va_arg(argp, double);
-                sprintf(temp, "%f", dval);
-                break;
-            case 's':
-                sval = va_arg(argp, char *);
-                strcpy(temp, sval);
-                break;
-            default:
-                putchar(c);
-                break;
+        case 'd':
+            ival = va_arg(argp, int);
+            sprintf(temp, "%d", ival);
+            break;
+        case 'f':
+            dval = va_arg(argp, double);
+            sprintf(temp, "%f", dval);
+            break;
+        case 's':
+            sval = va_arg(argp, char *);
+            strcpy(temp, sval);
+            break;
+        default:
+            putchar(c);
+            break;
         }
 
         if (temp[0] != '\0')
@@ -98,8 +107,8 @@ void my_printf(char *fmt, ...)
             {
                 strcpy(out, temp);
             }
-                
-            if (padding!=0 && strlen(out)<padding)
+
+            if (padding != 0 && strlen(out) < padding)
             {
                 int npads = padding - strlen(out);
                 if (pad_right)
@@ -122,6 +131,11 @@ void my_printf(char *fmt, ...)
     va_end(argp);
 }
 
+/**
+ * @brief Pads n blanks to the output
+ *
+ * @param n the number of blanks to pad
+ */
 void pad(int n)
 {
     while (n-- > 0)

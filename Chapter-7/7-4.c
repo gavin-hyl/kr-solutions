@@ -1,6 +1,11 @@
-/*
-    Write a private version of scanf analogous to minprintf from the previous section.
-*/
+/**
+ * @file 7-4.c
+ * @author Gavin Hua
+ * @brief Exercise 7-4.
+ *
+ * Write a private version of scanf analogous to minprintf from the previous
+ * section.
+ */
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -18,6 +23,13 @@ int main(void)
     return 0;
 }
 
+/**
+ * @brief Minimal scanf with variable argument list
+ *
+ * @param fmt the format string
+ * @param ... variable length argument list
+ * @return the number of arguments converted
+ */
 int minscanf(char *fmt, ...)
 {
     int converted = 1;

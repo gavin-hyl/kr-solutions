@@ -1,7 +1,12 @@
-/*
-    Write a program to print a set of files, starting each new one on a new page,
-    with a title and a running page count for each file.
-*/
+/**
+ * @file 7-8.c
+ * @author Gavin Hua
+ * @brief Exercise 7-8.
+ * 
+ * Write a program to print a set of files, starting each new one on a new page,
+ * with a title and a running page count for each file.
+ */
+
 
 #include <stdio.h>
 #include <string.h>
@@ -51,6 +56,10 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
+/**
+ * @brief Prints a page break message every time its called. Keeps an internal
+ * page count.
+ */
 void pagebreak()
 {
     static int npage = 1;

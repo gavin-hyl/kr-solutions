@@ -1,8 +1,12 @@
-/*
-    Write a program that will print arbitrary input in a sensible way. 
-    As a minimum, it should print non-graphic characters in octal or hexadecimal 
-    according to local custom, and break long text lines.
-*/
+/**
+ * @file 7-2.c
+ * @author Gavin Hua
+ * @brief Exercise 7-2.
+ * 
+ * Write a program that will print arbitrary input in a sensible way. As a 
+ * minimum, it should print non-graphic characters in octal or hexadecimal 
+ * according to local custom, and break long text lines.
+ */
 
 #include <stdio.h>
 #include <ctype.h>
@@ -43,6 +47,13 @@ int main()
     }
 }
 
+/**
+ * @brief Determine where a line should be broken, going from back to front
+ *
+ * @param line the line
+ * @param force_break the maximum length for the line to continue
+ * @return the break position
+ */
 int get_break(char *line, int force_break)
 {
     int p = force_break;
@@ -57,6 +68,13 @@ int get_break(char *line, int force_break)
     return force_break;
 }
 
+/**
+ * @brief Read a line from user input
+ *
+ * @param s the char array for which the line will be read into
+ * @param lim maximum length to read
+ * @return the number of characters read
+ */
 int get_line(char s[], int lim)
 {
     int c, i=0;
